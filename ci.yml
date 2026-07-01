@@ -1,0 +1,71 @@
+name: SDET Portfolio Demo — CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 20 * * *'  # Nightly 8 PM UTC = 1:30 AM IST
+  workflow_dispatch:        # Manual trigger from GitHub UI
+
+jobs:
+  test:
+    name: Run Selenium + API Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        browser: [chrome]   # Firefox add करायचं असेल तर: [chrome, firefox]
+      fail-fast: false
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Java 17
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'   # Maven dependencies cached — faster builds
+
+      # Step 3: Run Tests
+      - name: Run Tests (${{ matrix.browser }})
+        run: |
+          mvn clean test \
+            -Dbrowser=${{ matrix.browser }} \
+            -Dheadless=true \
+            -P smoke
+
+      # Step 4: Generate Allure Report (always — even on failure)
+      - name: Generate Allure Report
+        if: always()
+        run: mvn allure:report
+
+      # Step 5: Upload Test Report as Artifact
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-${{ matrix.browser }}
+          path: target/site/allure-maven-plugin/
+          retention-days: 30
+
+      # Step 6: Upload Surefire XML results
+      - name: Upload Surefire Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-results-${{ matrix.browser }}
+          path: target/surefire-reports/
+          retention-days: 7
+
+      # Step 7: Publish Test Results (shows pass/fail in GitHub UI)
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: target/surefire-reports/*.xml
