@@ -1,25 +1,29 @@
-# Hi, I'm Pratiksha Khade 👋
+Western Union Automation Framework
 
-**Senior SDET | 6+ Years Fintech | 
-Playwright + Selenium | REST Assured | CI/CD**
+Tech Stack:
+- Java
+- Selenium
+- Playwright
+- TestNG
+- Maven
+- REST Assured
 
-## What I Build
-End-to-end automation frameworks for fintech 
-platforms — UI + API + Database validation.
+Framework Features:
+- Page Object Model
+- API Automation
+- Parallel Execution
+- CI/CD Integration
+- Extent Reports
 
-## Key Achievements
-Caught production connection pool bug via 
-parallel automation (API 201, DB 0 rows)
-Reduced CI flakiness 12%→3% (6 weeks)
-Suite execution 18→6 min (65% faster)
-LAG query 2300ms→80ms (29x improvement)
+Execution:
+mvn clean test
 
 ## Tech Stack
 Playwright | Selenium | REST Assured | TestNG | 
 Maven | JDBC | GitHub Actions | Jenkins | SQL | 
 BDD/Cucumber | Design Patterns
 
-## 🏦 Domain
+## Domain
 Western Union | IDFC First Bank | DBS Bank
 
 ## 📍 Location
